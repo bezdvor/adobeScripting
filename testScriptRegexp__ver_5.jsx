@@ -1,4 +1,5 @@
 ﻿#target bridge
+#include testFunction.jsx;
 
 //=============== Variables =====================
 var myInfo_01 = "sell_MSK";
@@ -24,12 +25,12 @@ if (!fileList) {
 	exit();
 };
 //==== constructions patterns ========
-var magVinilConstr = /маг\s*винил|магнитн|mag\s*(vinil|vynyl)/i;
+var magVinilConstr = /маг\.*\s*винил|магнитн|mag\s*(vinil|vynyl)/i;
 var stickerConstr = /стикер|наклей/i;
 var liboxConstr = /LB|лайтбо|lightbo/i;
 var ramaConstr = /рама|марзан/i;
 var karmanConstr = /карман(ы)*\s*\-*\d{2,3}/i;
-var pvcConstr = /пвх\s*\-*d{1,2}\s*(\u043C\u043C|mm)/i;
+var pvcConstr = /(пвх\s*\-*d{1,2}\s*(\u043C\u043C|mm))/i;
 //==== patterns======
 var headPos = /\u2116*\s*\u043F\.(\u043F|\u043D)/i;//поиск номера позиции, № п.п, п.н (КРОМЕ ПОЗИЦИЙ где в колонке написано № макета!!!)
 //var headPos = /(\u0023*\s*\u043F\s*[\.\,]\s*\(\u043D|\u043F))/i;//поиск номера позиции, № п.п, п.н
@@ -122,33 +123,16 @@ switch (true) {
         myMaterial = "\u041F\u0412\u0425"; //ПВХ большими буквами
         break;
         case (paper.test(splitArr[i][j])):
-        myMaterial = "\u0431\u0443\u043C\u0430\u0433\u0430";
+      	myMaterial = "\u0431\u0443\u043C\u0430\u0433\u0430";
         break;
     }; //end switch
 };//end for(j) 
 //================== Определение конструкции ==========================
+/*
 for (var y = 0; y < splitArr[i].length; y++) {
-	switch (true){
-		case (magVinilConstr.test(splitArr[i][y])):
-		constrName = ["\u043C\u0430\u0433\u0432\u0438\u043D\u0438\u043B"]; //магвинил
-		break;
-		case (stickerConstr.test(splitArr[i][y])):
-		constrName = ["\u043D\u0430\u043A\u043B\u0435\u0439\u043A\u0430"];//наклейка
-		break;
-		case (liboxConstr.test(splitArr[i][y]))://лайтбокс
-		constrName = ["LB"];
-		break;
-		case (ramaConstr.test(splitArr[i][y])):
-		constrName = ["\u0440\u0430\u043C\u0430"];//рама
-		break;
-		case (karmanConstr.test(splitArr[i][y])):
-		constrName = splitArr[i][y].match(karmanConstr);//карманы
-		break;
-		case (pvcConstr.test(splitArr[i][y])):
-		constrName = splitArr[i][y].match(pvcConstr);//пвх
-		break;
-	}; //конец switch
+constructHandle(splitArr[i]);
 };
+*/
 
 for (var n = 0; n < splitArr[i].length; n++) {
 switch (true) {
@@ -171,7 +155,7 @@ if(mySides == ""){
 	var myInfo_02 = "infoSup__"
 } else{myInfo_02 = ""};
 
-nameArr.push(orderNum + "_RU" + "__" + splitArr[i][posIndex] + "__" + constrName[0] + "__" + myMaterial + "__" + splitArr[i][widthIndex] + "x" + splitArr[i][heightIndex] + "__"  + myInfo_01 + "__" + mySides + myInfo_02 + splitArr[i][countIndex] + "sht");
+nameArr.push(orderNum + "_RU" + "__" + splitArr[i][posIndex] + "__" + constructHandle(splitArr[i]) + "__" + myMaterial + "__" + splitArr[i][widthIndex] + "x" + splitArr[i][heightIndex] + "__"  + myInfo_01 + "__" + mySides + myInfo_02 + splitArr[i][countIndex] + "sht");
 }; // end of for (i) конец основного наполняющего цикла
 //=========================================================================
 var resultFile = File("d:\\1\\result.txt");
@@ -185,3 +169,28 @@ for (var i = 0; i < nameArr.length; i++) {
     resultFile.writeln(nameArr[i]);
 }
 resultFile.close();
+
+
+/*
+switch (true){
+		case (magVinilConstr.test(splitArr[i][y])):
+		constrName = ["\u043C\u0430\u0433\u0432\u0438\u043D\u0438\u043B"]; //магвинил
+		break;
+		case (stickerConstr.test(splitArr[i][y])):
+		constrName = ["\u043D\u0430\u043A\u043B\u0435\u0439\u043A\u0430"];//наклейка
+		break;
+		case (liboxConstr.test(splitArr[i][y]))://лайтбокс
+		constrName = ["LB"];
+		break;
+		case (ramaConstr.test(splitArr[i][y])):
+		constrName = ["\u0440\u0430\u043C\u0430"];//рама
+		break;
+		case (karmanConstr.test(splitArr[i][y])):
+		constrName = splitArr[i][y].match(karmanConstr);//карманы
+		break;
+		case (pvcConstr.test(splitArr[i][y])):
+		constrName = splitArr[i][y].match(pvcConstr);//пвх
+		break;
+	}; //конец switch
+
+	*/
