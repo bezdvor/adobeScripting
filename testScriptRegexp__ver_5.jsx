@@ -1,126 +1,187 @@
-﻿#target photoshop
-app.bringToFront();
-//#include functions.jsx
+﻿#target bridge
 
-//===================== ВАЖНО!!!!!!=========================
-//	физический размер файлов не должен превышать 10,5 м. по большей стороне при разрешении 72 dpi
-//	или 7,6м. по большей стороне при разрешении 100dpi
+//=============== Variables =====================
+var myInfo_01 = "sell_MSK";
+var orderNum = "noname";
+var myMaterial = "noname";
+var mySides = "noname";
+var constrName = "noname";
+var myArr = [];
+var splitArr = [];
+var nameArr = [];
+var sizeArr = [[],[]];
 
-startRulerUnits = app.preferences.rulerUnits
-startTypeUnits = app.preferences.typeUnits
-startDisplayDialogs = app.displayDialogs
-	//change settings
-app.preferences.rulerUnits = Units.PIXELS
-app.preferences.typeUnits = TypeUnits.PIXELS
-app.displayDialogs = DialogModes.NO
+var posIndex = "";
+var materIndex = "";
+var widthIndex = "";
+var heightIndex = "";
+var countIndex = "";
+var sideIndex = "";
 
-var fileList = File("d:\\8\\buffer.tsv");
+var fileList = File("d:\\1\\buffer.tsv");
 if (!fileList) {
 	alert('No file list');
 	exit();
 };
-var projectFolder = fileList.parent.fsName; //устанавливаем папку для файлов там, где находится текстовый файл со списком 
-if (!projectFolder) {
-	alert('No project folder!');
-	exit();
-};
-
-//var dpi = prompt("Разрешение файлов (dpi):", "72"); //устанавливаем разрешение для файлов
-
-//============================== Variables ==============================
-var orderNum = null;//номер заказа
-var tmp = [];
-var tmp_02 = "";
-var resultArr = [];
-//============
-var tabResult;
-var workArr = [];
-var workArr02 = [];
-var indexArr = [];
-//var materIndex = initString.match(materTemplate).index;
-//var widthIndex = initString.match(widthTemplate).index;
-//var heightIndex = initString.match(heightTemplate).index;
-
-
-//============================== Patterns ===============================
-var orderReg_01 = /[SDE\u041B\u043B\u0415\u0435]\d{4}(\u005F\d{1,2})*/i;//паттерн номера заказа по буквам S, D, E, Л, Е русское
-var workSizes = /(\t\d{2,5}\t\d{2,5})/i;//паттерн поиска размеров с табуляциями 
-var strNum = /(^\d{1,3}\t)/i;//паттерн поиска номера позиции должен быть только первой колонкой!!!!!
-var tabTemplate = /\t/g;
-var materTemplate = /материа/i;
-var widthTemplate = /ширин/i;
-var heightTemplate = /высот/i;
-var sideTemplate = /(Количество|кол-во)\s*(стор|ст)/i;
-//var countTemplate = /(?<=(Количество|кол-во)\s*(стор|ст))(Количество|кол-во|итого|всего)/gi;
-
-//=======================================================================
+//==== constructions patterns ========
+var magVinilConstr = /маг\s*винил|магнитн|mag\s*(vinil|vynyl)/i;
+var stickerConstr = /стикер|наклей/i;
+var liboxConstr = /LB|лайтбо|lightbo/i;
+var ramaConstr = /рама|марзан/i;
+var karmanConstr = /карман(ы)*\s*\-*\d{2,3}/i;
+var pvcConstr = /пвх\s*\-*d{1,2}\s*(\u043C\u043C|mm)/i;
+//==== patterns======
+var headPos = /\u2116*\s*\u043F\.(\u043F|\u043D)/i;//поиск номера позиции, № п.п, п.н (КРОМЕ ПОЗИЦИЙ где в колонке написано № макета!!!)
+//var headPos = /(\u0023*\s*\u043F\s*[\.\,]\s*\(\u043D|\u043F))/i;//поиск номера позиции, № п.п, п.н
+var headMaterial = /Материал/i;
+var headWight = /(Ширина\_*\s*\u043C\u043C)/i; //в реге запятые заменены на нижнее подчеркивание
+var headHeight = /(Высота\_*\s*\u043C\u043C)/i; //в реге запятые заменены на нижнее подчеркивание
+var headSide = /(во\s*сторо)/i;
+var headCount = /итого|(Количество\_*\s*шт*)|Кол-во\_*\s*шт|всего/i;//в реге запятые заменены на нижнее подчеркивание
+var stringEnd = /(\u000D\u000A)/i;
+var tabSplit = /\t/i; //(\t{1,3})
+var orderReg_01 = /[SDE\u041B\u043B\u0415\u0435]\d{4}(\u005F\d{1,2})*/i;//pattern of order num ИЩЕТ НОМЕР ЗАКАЗА
+var stringDelim = /\d{1,3}:\s*\(\d{1,3}\)\s*/i;
+var stringRepl = /,\r\n/gi;
+var matchPos = /\d{1,4}/i;
+var cloth = /ткан|ткани ЛБ|ткань ЛБ|Бергер|berger|EcoDisplay|textile|fabric|quat|кватро|кваттро/i; //pattern for cloth
+var film = /пленк|плёнк|накл|наклейк|винил|оракал|vinyl|vinil|Oracal|Orajet/i; //pattern of film
+var pvc = /пвх|pvh|pvc/i; //pattern of pvc
+var paper = /бумага|paper/i;//pattern of paper or karton
+//=================================================
 
 fileList.open("r");
-while(!fileList.eof){
+while(!fileList.eof) {
 var initString = fileList.readln();
-if (initString.match(orderReg_01) != null) {
-	orderNum = initString.match(orderReg_01)[0].toString();
-	break;
-}
+var tmpString = initString.split(stringEnd);
+myArr.push(tmpString + "\u000D\u000A");//добавляем в массив с преобразованием в строку
 };
-
-//=====================================================
-while(!fileList.eof){
-var initString = fileList.readln();
-if (materTemplate.test(initString) && widthTemplate.test(initString) && heightTemplate.test(initString)) {
-while (tabResult = tabTemplate.exec(initString)) {
-workArr.push(tabResult.index);
-	switch(tabResult.index) {
-  case (initString.match(materTemplate).index - 1): //0 материал
-    indexArr.push(workArr.length);
-break;
-  case (initString.match(widthTemplate).index - 1): //1 ширина
-    indexArr.push(workArr.length);
- break;
- case (initString.match(heightTemplate).index - 1): //2 высота
-    indexArr.push(workArr.length);
- break;
-}//end of switch
-}//end of while
-break;
-}//end of if
-} //end of while
-//====================================================
-if (fileList.tell() > 0) {
-	fileList.seek(0,0);
-}
-
-//====================================================
-while(!fileList.eof){
-var initString = fileList.readln();
-if (indexArr[0] && indexArr[1] && initString.match(strNum) != null) {
-tmp = initString.split(/\t/);
-
-tmp_02 = ("__" + tmp[0] + "__" + tmp[indexArr[0]] + "__" + tmp[indexArr[1]] + "x" + tmp[indexArr[2]] + "__" + "sht").toString();
-resultArr.push(orderNum + tmp_02);
-}
-};
-
-//alert(workArr);
-//alert(indexArr);
-
-for (var i = 0; i < resultArr.length; i++) {
-	//alert(resultArr[i]);
-}
-
-//alert(orderNum);
-//alert(tabArr);
-//alert(numArr);
 fileList.close();
 
-var resultFile = File("d:\\8\\result.txt");
-resultFile.open("w");
-for (var i = 0; i < resultArr.length; i++) {
-      resultFile.writeln(resultArr[i]);
+for (var i = 0; i < myArr.length; i++) {
+var commaChange = myArr[i].replace(/\u002C/g, "_"); //заменяем запятую на нижнее подчеркивание
+splitArr.push(commaChange.split(tabSplit));
 };
-    resultFile.close();
 
+for (var i = 0; i < splitArr.length; i++) {
+	for (var k = 0; k < splitArr[i].length; k++) {
+		if (splitArr[i][k].length === 0) {
+			splitArr[i][k] = "\u00A7"; //ставит вместо пустого элемента массива знак параграфа
+		 };
+	}
+}
+//============== ПОЗИЦИОНИРОВАНИЕ ПО КОЛОНКАМ =====================
+for (var i = 0; i < splitArr.length; i++) {
+for (var j = 0; j < splitArr[i].length; j++) {
+	switch (true){
+		case (headPos.test(splitArr[i][j])):
+		posIndex = new Number(j)};
+		switch(true){
+		case (headMaterial.test(splitArr[i][j])):
+		materIndex = new Number(j)};
+		switch(true){
+		case (headSide.test(splitArr[i][j])):
+		sideIndex = new Number(j)};
+		switch(true){
+		case (headWight.test(splitArr[i][j])):
+		sizeArr[0].push(new Number(j));
+		}	
+		switch(true){
+		case (headHeight.test(splitArr[i][j])):
+		sizeArr[1].push(new Number(j)); 
+		}
+		switch(true){
+		case (headCount.test(splitArr[i][j])):
+		countIndex = new Number(j)};
+};
+};
 
+widthIndex = sizeArr[0][0]; //задаем первое совпадение по регу как ширину
+heightIndex = sizeArr[1][0];//задаем первое совпадение по регу как высоту
+//====================== ПОИСК НОМЕРА ЗАКАЗА =====================
+outer: for (var i = 0; i < splitArr.length; i++) {
+	for (var z = 0; z < splitArr[i].length; z++) {
+		if(orderReg_01.test(splitArr[i][z])){
+orderNum = splitArr[i][z].match(orderReg_01);
+orderNum = orderNum[0];
+break outer;
+		}
+	}
+};
+//=================================== Основной Наполняющий Цикл ======================================
+for (var i = 0; i < splitArr.length; i++) {
+for (var j = 0; j < splitArr[i].length; j++) {
+switch (true) {
+    case (cloth.test(splitArr[i][j])):
+        myMaterial = "\u0442\u043A\u0430\u043D\u044C";
+        break;
+         case (film.test(splitArr[i][j])):
+        myMaterial = "\u043F\u043B\u0435\u043D\u043A\u0430";
+        break;
+         case (pvc.test(splitArr[i][j])):
+        myMaterial = "\u041F\u0412\u0425"; //ПВХ большими буквами
+        break;
+        case (paper.test(splitArr[i][j])):
+        myMaterial = "\u0431\u0443\u043C\u0430\u0433\u0430";
+        break;
+    }; //end switch
+};//end for(j) 
+//================== Определение конструкции ==========================
+for (var y = 0; y < splitArr[i].length; y++) {
+	switch (true){
+		case (magVinilConstr.test(splitArr[i][y])):
+		constrName = ["\u043C\u0430\u0433\u0432\u0438\u043D\u0438\u043B"]; //магвинил
+		break;
+		case (stickerConstr.test(splitArr[i][y])):
+		constrName = ["\u043D\u0430\u043A\u043B\u0435\u0439\u043A\u0430"];//наклейка
+		break;
+		case (liboxConstr.test(splitArr[i][y]))://лайтбокс
+		constrName = ["LB"];
+		break;
+		case (ramaConstr.test(splitArr[i][y])):
+		constrName = ["\u0440\u0430\u043C\u0430"];//рама
+		break;
+		case (karmanConstr.test(splitArr[i][y])):
+		constrName = splitArr[i][y].match(karmanConstr);//карманы
+		break;
+		case (pvcConstr.test(splitArr[i][y])):
+		constrName = splitArr[i][y].match(pvcConstr);//пвх
+		break;
+	}; //конец switch
+};
 
+for (var n = 0; n < splitArr[i].length; n++) {
+switch (true) {
+	case (n == sideIndex):
+	switch (true) {
+			case (new Number(splitArr[i][n]) == 1):
+			mySides = "4+0__";
+			break;
+			case (new Number(splitArr[i][n]) == 2):
+			mySides = "4+4__";
+			break;
+		default:
+			mySides = "";
+			break;
+	}
+		};//конец внешнего свича
+	}; //end for(n)
 
+if(mySides == ""){
+	var myInfo_02 = "infoSup__"
+} else{myInfo_02 = ""};
 
+nameArr.push(orderNum + "_RU" + "__" + splitArr[i][posIndex] + "__" + constrName[0] + "__" + myMaterial + "__" + splitArr[i][widthIndex] + "x" + splitArr[i][heightIndex] + "__"  + myInfo_01 + "__" + mySides + myInfo_02 + splitArr[i][countIndex] + "sht");
+}; // end of for (i) конец основного наполняющего цикла
+//=========================================================================
+var resultFile = File("d:\\1\\result.txt");
+if (!resultFile) {
+    alert('No file list');
+    exit();
+};
+
+resultFile.open("w");
+for (var i = 0; i < nameArr.length; i++) {
+    resultFile.writeln(nameArr[i]);
+}
+resultFile.close();
