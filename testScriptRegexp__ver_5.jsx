@@ -2,7 +2,7 @@
 #include testFunction.jsx;
 
 //=============== Variables =====================
-var myInfo_01 = "sell_MSK";
+var myInfo_01 = "adidasWinComp";
 var orderNum = "noname";
 var myMaterial = "noname";
 var mySides = "noname";
@@ -35,8 +35,10 @@ var pvcConstr = /(пвх\s*\-*d{1,2}\s*(\u043C\u043C|mm))/i;
 var headPos = /\u2116*\s*\u043F\.(\u043F|\u043D)/i;//поиск номера позиции, № п.п, п.н (КРОМЕ ПОЗИЦИЙ где в колонке написано № макета!!!)
 //var headPos = /(\u0023*\s*\u043F\s*[\.\,]\s*\(\u043D|\u043F))/i;//поиск номера позиции, № п.п, п.н
 var headMaterial = /Материал/i;
-var headWight = /(Ширина\_*\s*\u043C\u043C)/i; //в реге запятые заменены на нижнее подчеркивание
-var headHeight = /(Высота\_*\s*\u043C\u043C)/i; //в реге запятые заменены на нижнее подчеркивание
+var headWight = /Ширина/i; //в реге запятые заменены на нижнее подчеркивание
+//var headWight = /(Ширина\_*\s*\u043C\u043C)/i; //в реге запятые заменены на нижнее подчеркивание
+var headHeight = /Высота/i; //в реге запятые заменены на нижнее подчеркивание
+//var headHeight = /(Высота\_*\s*\u043C\u043C)/i; //в реге запятые заменены на нижнее подчеркивание
 var headSide = /(во\s*сторо)/i;
 var headCount = /итого|(Количество\_*\s*шт*)|Кол-во\_*\s*шт|всего/i;//в реге запятые заменены на нижнее подчеркивание
 var stringEnd = /(\u000D\u000A)/i;
@@ -159,7 +161,7 @@ nameArr.push(orderNum + "_RU" + "__" + splitArr[i][posIndex] + "__" + constructH
 }; // end of for (i) конец основного наполняющего цикла
 //=========================================================================
 var resultFile = File("d:\\1\\result.txt");
-if (!resultFile) {
+if (!resultFile.exists) {
     alert('No file list');
     exit();
 };
@@ -169,7 +171,6 @@ for (var i = 0; i < nameArr.length; i++) {
     resultFile.writeln(nameArr[i]);
 }
 resultFile.close();
-
 
 /*
 switch (true){
