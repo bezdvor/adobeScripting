@@ -71,8 +71,8 @@ for (var i = 0; i < splitArr.length; i++) {
 		if (splitArr[i][k].length === 0) {
 			splitArr[i][k] = "\u00A7"; //ставит вместо пустого элемента массива знак параграфа
 		 };
-	}
-}
+	};
+};
 //============== ПОЗИЦИОНИРОВАНИЕ ПО КОЛОНКАМ =====================
 for (var i = 0; i < splitArr.length; i++) {
 for (var j = 0; j < splitArr[i].length; j++) {
@@ -130,6 +130,7 @@ switch (true) {
     }; //end switch
 };//end for(j) 
 //================== Определение конструкции ==========================
+
 /*
 for (var y = 0; y < splitArr[i].length; y++) {
 constructHandle(splitArr[i]);
