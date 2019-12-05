@@ -9,7 +9,7 @@ app.bringToFront();
 startRulerUnits = app.preferences.rulerUnits
 startTypeUnits = app.preferences.typeUnits
 startDisplayDialogs = app.displayDialogs
-	//change settings
+//change settings
 app.preferences.rulerUnits = Units.PIXELS
 app.preferences.typeUnits = TypeUnits.PIXELS
 app.displayDialogs = DialogModes.NO
@@ -51,14 +51,14 @@ while (!fileList.eof) { //проходим циклом каждую строч�
 	var construct = constructString.match(/рама|LB|лайтбо|маг винил|магвинил|магнитн|пвх|pvh/i); //возвращает совпадение или null без учета регистра
 	var workString = initString.split("__");
 
-	if(workString.length > 8){
-	var initCell = workString[8];
-	var quattroDim = initCell.match(regPattern);
-	quattroDim = quattroDim.split(regPatforX);
-	var quattroSizes = quattroDim.slice();
-	quattroSizes.splice(1,1);
-	var cellSizeW = parseInt(quattroSizes[0]);
-	var cellSizeH = parseInt(quattroSizes[1]);
+	if (workString.length > 8) {
+		var initCell = workString[8];
+		var quattroDim = initCell.match(regPattern);
+		quattroDim = quattroDim.split(regPatforX);
+		var quattroSizes = quattroDim.slice();
+		quattroSizes.splice(1, 1);
+		var cellSizeW = parseInt(quattroSizes[0]);
+		var cellSizeH = parseInt(quattroSizes[1]);
 	}
 
 	var orderNum = workString[0].toString();
@@ -110,13 +110,13 @@ while (!fileList.eof) { //проходим циклом каждую строч�
 	//placeObj (100, 100, "d:\\Work\\ADIDAS_RU\\S8320_2_RU_Зоя_Perf_МОНТАЖ_таблички на витрины 2,3,4 волны EOSS FW19_29.11.19\\in\\tabl2-2.tif");
 	//=========================================
 	//======================================== РИСУЕМ ПРЯМОУГОЛЬНИК !!!!
-/*	var rectColor = new SolidColor();
+	/*	var rectColor = new SolidColor();
 
-	rectColor.cmyk.cyan = 0;
-	rectColor.cmyk.magenta = 0;
-	rectColor.cmyk.yellow = 0;
-	rectColor.cmyk.black = 0;
-*/
+		rectColor.cmyk.cyan = 0;
+		rectColor.cmyk.magenta = 0;
+		rectColor.cmyk.yellow = 0;
+		rectColor.cmyk.black = 0;
+	*/
 	//function drawRect (rectLeft, rectTop, rectRight, rectBottom, rectColor)
 	//drawRect(xDim, xDim, Width - xDim, Height - xDim, rectColor);
 
