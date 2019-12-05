@@ -1,4 +1,5 @@
 var constRegexp = [/маг\.*\s*винил|магнитн|mag\s*(vinil|vynyl)/i,/стикер|наклей/i,/LB|лайтбо|lightbo/i,/рама|марзан/i,/карман(ы)*/i,/(пвх\s*\d{1,2})/i,/paper|бумага/i,/(по)*резка/i];
+var constName = ["магвинил","наклейка","LB","рама","карманы","ПВХ","бумага","плоттер"];
 
 function constructHandle(arr){
 for (var i = 0; i < arr.length; i++) {
@@ -11,7 +12,19 @@ for (var i = 0; i < arr.length; i++) {
 	};
 };
 };
-
+function nameHandle(arr){
+var tmp = arr.split("__");
+for (var i = 0; i < tmp.length; i++) {
+    for (var j = 0; j < constRegexp.length; j++) {
+        switch (true) {
+            case (constRegexp[j].test(tmp[i])):
+            tmp[i] = constName[j];
+        };
+    };
+};
+arr = tmp.join("__");
+return arr
+};//end of function
 
 //============= Вспомогательные Функции ====================
 function makeSolidFillAdjLayer(C, M, Y, B) {

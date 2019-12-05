@@ -130,7 +130,6 @@ switch (true) {
     }; //end switch
 };//end for(j) 
 //================== Определение конструкции ==========================
-
 /*
 for (var y = 0; y < splitArr[i].length; y++) {
 constructHandle(splitArr[i]);
@@ -160,7 +159,15 @@ if(mySides == ""){
 
 nameArr.push(orderNum + "_RU" + "__" + splitArr[i][posIndex] + "__" + constructHandle(splitArr[i]) + "__" + myMaterial + "__" + splitArr[i][widthIndex] + "x" + splitArr[i][heightIndex] + "__"  + myInfo_01 + "__" + mySides + myInfo_02 + splitArr[i][countIndex] + "sht");
 }; // end of for (i) конец основного наполняющего цикла
-//=========================================================================
+
+//===================== Обработка готового массива с элементами =============================
+for (var x = 0; x < nameArr.length; x++) {
+nameHandle(nameArr[x]);
+};
+
+
+//========================= Запись результатов в текстовый файл =============================
+
 var resultFile = File("d:\\1\\result.txt");
 if (!resultFile.exists) {
     alert('No file list');
@@ -172,6 +179,8 @@ for (var i = 0; i < nameArr.length; i++) {
     resultFile.writeln(nameArr[i]);
 }
 resultFile.close();
+
+
 
 /*
 switch (true){
