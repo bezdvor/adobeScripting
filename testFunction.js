@@ -7,7 +7,7 @@ function constructHandle(arr) {
         for (var j = 0; j < constRegexp.length; j++) {
             switch (true) {
                 case (constRegexp[j].test(arr[i])):
-                    var tmp = arr[i].match(constRegexp[j]);
+                    //var tmp = arr[i].match(constRegexp[j]);
                     var out = constName[j];
                     break inner;
             };
@@ -18,7 +18,6 @@ function constructHandle(arr) {
 
 //============= Вспомогательные Функции ====================
 function makeSolidFillAdjLayer(C, M, Y, B) {
-    // =======================================================
     var idMk = charIDToTypeID("Mk  ");
     var desc3 = new ActionDescriptor();
     var idnull = charIDToTypeID("null");
@@ -73,12 +72,17 @@ function savePSB(saveFile) {
 };
 
 function savePSD(saveAsName) {
-    var pso = new PhotoshopSaveOptions();
-    pso.alphaChannels = false;
-    pso.embedColorProfile = false;
-    pso.layers = true;
-    pso.spotColors = false;
-    app.activeDocument.saveAs(File(saveAsName), pso);
+    try {
+        var pso = new PhotoshopSaveOptions();
+        pso.alphaChannels = false;
+        pso.embedColorProfile = false;
+        pso.layers = true;
+        pso.spotColors = false;
+        app.activeDocument.saveAs(File(saveAsName), pso);
+    } catch (e) {
+        alert(e);
+    }
+
 }
 
 function setGuide(direction, value) {

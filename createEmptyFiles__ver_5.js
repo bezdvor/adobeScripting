@@ -14,7 +14,7 @@ app.preferences.rulerUnits = Units.PIXELS
 app.preferences.typeUnits = TypeUnits.PIXELS
 app.displayDialogs = DialogModes.NO
 
-var fileList = File.openDialog('File list', 'Text files:*.TXT'); //выбираем список файлов
+var fileList = File("d:\\1\\result.txt"); //выбираем список файлов
 if (!fileList) {
 	alert('No file list');
 	exit();
@@ -30,7 +30,6 @@ var dpi = prompt("Разрешение файлов (dpi):", "72"); //устан
 
 fileList.open("r");
 while (!fileList.eof) { //проходим циклом каждую строчку из списка файлов
-
 	var initString = fileList.readln(); //входная строка из текстового файла
 	//============================================ПОИСК РАЗМЕРОВ ДОКУМЕНТА
 	var regPattern = /\d{2,}(x|х)\d{2,}/ig; //паттерн для поиска размеров, без учета регистра, ищет все совпадения
@@ -74,21 +73,6 @@ while (!fileList.eof) { //проходим циклом каждую строч�
 	var amount = workString[7];
 	var Width = f_mm_To_px(parseInt(sizes[0]), dpi);
 	var Height = f_mm_To_px(parseInt(sizes[1]), dpi);
-	/*var myRatio = (Width / Height);
-	myRatio = myRatio.toFixed(2);
-	myRatio = myRatio.split("");
-	myRatio[1] = ",";
-	myRatio = myRatio.join("");
-	if (Width > Height) {
-		windowType = windowType + "--" + myRatio + "--гори";
-	} else if (Width < Height) {
-		windowType = windowType + "--" + myRatio + "--верт";
-	} else if (Width = Height) {
-		windowType = windowType + "--" + myRatio + "--квад";
-	} else {
-		alert("С размерами что-то не так!!!");
-		exit();
-	}*/
 	var fileName = [orderNum, positionNum, constructNum, material, workSizes, graphic, windowType, amount];
 	fileName = fileName.join("__");
 	var newDoc = app.documents.add(Width, Height, dpi, fileName, NewDocumentMode.CMYK, DocumentFill.TRANSPARENT);

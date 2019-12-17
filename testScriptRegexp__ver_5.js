@@ -33,9 +33,9 @@ var stickerConstr = /стикер|наклей/i;
 var liboxConstr = /LB|лайтбо|lightbo/i;
 var ramaConstr = /рама|марзан/i;
 var karmanConstr = /карман(ы)*\s*\-*\d{2,3}/i;
-var pvcConstr = /(пвх\s*\-*d{1,2}\s*(\u043C\u043C|mm))/i;
+var pvcConstr = /(пвх\s*\-*\d{1,2}\s*(\u043C\u043C|mm))/i;
 //==== patterns======
-var headPos = /\u2116*\s*\u043F\.(\u043F|\u043D)/i; //поиск номера позиции, № п.п, п.н (КРОМЕ ПОЗИЦИЙ где в колонке написано № макета!!!)
+var headPos = /\u2116*\s*((\u043C\u0430\u043A\u0435\u0442\u0430)|(\u043F\.(\u043F|\u043D)))/i; //поиск номера позиции, № п.п, п.н (КРОМЕ ПОЗИЦИЙ где в колонке написано № макета!!!)
 //var headPos = /(\u0023*\s*\u043F\s*[\.\,]\s*\(\u043D|\u043F))/i;//поиск номера позиции, № п.п, п.н
 var headMaterial = /Материал/i;
 var headWight = /Ширина/i; //в реге запятые заменены на нижнее подчеркивание
@@ -123,7 +123,7 @@ for (var i = 0; i < splitArr.length; i++) {
 	for (var j = 0; j < splitArr[i].length; j++) {
 		switch (true) {
 			case (cloth.test(splitArr[i][j])):
-				myMaterial = "\u0442\u043A\u0430\u043D\u044C";
+				myMaterial = "\u0442\u043A\u0430\u043D\u044C"; //ткань
 				break;
 			case (film.test(splitArr[i][j])):
 				myMaterial = "\u043F\u043B\u0435\u043D\u043A\u0430";
